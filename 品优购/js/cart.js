@@ -8,7 +8,7 @@ $(() => {
                     <div class="row">
                         <div class="cell col-1 row">
                             <div class="cell col-1">
-                                <input type="checkbox" class="item-ck" checked="">
+                                <input type="checkbox" class="item-ck" ${e.isChecked ? "checked" : ''}>
                             </div>
                             <div class="cell col-4">
                                 <img src="${e.imgSrc}" alt="">
@@ -65,6 +65,30 @@ $(() => {
             e.isChecked = status;
         })
         // 重新存进本地数据
+        kits.saveData('cartListData', arr);
+    })
+
+    // 点选事件 由于数据是动态生成的所以需要注册委托事件
+    $('.item-list').on('click', '.item-ck', function () {
+        //判断可点选的个数是否和列表数量已勾选的数量是否一致
+        let ckAll = $('.item-ck').length === $('.item-ck:checked').length;
+        // 设置全选的状态和ckall一致就行
+        $('.pick-all').prop('checked', ckAll);
+        // 获取当前商品的 id, 可通过 id 进行修改当前 isChecked 的状态
+        let pID = $(this).parents('.item').attr('data-id');
+        // 获取当前这个单选是否是选中
+        let isChecked = $(this).prop('checked');
+
+        // 遍历本地存储数组
+        arr.forEach(e => {
+            // 判断id是否一致 找到对应的id商品
+            if (e.pID == pID) {
+                // 当id对应时执行
+                // 将当前勾选状态和数据里的状态修改为一致的
+                e.isChecked = isChecked;
+            }
+        });
+        // 并将其重新存入本地数据当中
         kits.saveData('cartListData', arr);
     })
 
