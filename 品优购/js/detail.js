@@ -60,6 +60,7 @@ $(() => {
       // 构建数据对象
       let obj = {
         pID: target.pID,
+        isChecked:true,
         imgSrc: target.imgSrc,
         name: target.name,
         price: target.price,
