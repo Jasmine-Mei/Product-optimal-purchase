@@ -193,4 +193,24 @@ $(() => {
         $(this).parents('.item').find('.computed').text(obj.number * obj.price);
     })
 
+    // 实现移除商品列表
+    // 由于商品列表是动态生成的,所以需要使用事件委托来实现移除效果
+    $('.item-list').on('click', '.item-del', function () {
+        layer.confirm('你确定要删除吗?', { icon: 0, title: '警告' }, (index) => {
+            layer.close(index);
+            // 在这里执行 删除的逻辑
+            // 先得到要删除的数据的id
+            let id = $(this).parents('.item').attr('data-id');
+            // 把当前点击的这个删除对应的这一行删掉
+            $(this).parents('.item').remove();
+            // 还要把本地存储里面的数据删除
+            arr = arr.filter(e => {
+                return e.pID != id;
+            });
+            kits.saveData('cartListData', arr);
+            // 重新更新总件数和总价
+            calcTotal();
+        });
+    })
+
 })
