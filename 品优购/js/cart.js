@@ -167,10 +167,12 @@ $(() => {
         let oldCount = $(this).val();
         $(this).attr('data-old', oldCount);
     })
+
     // 当输入框失去焦点的时候,同时也要把数据存起来更新到本地存储
+    let current;
     $('.item-list').on('blur', '.number', function () {
         // 获取此时的数量值
-        let current = $(this).val();
+        current = $(this).val();
         // 每次让用户自己输入的内容，一定要做合法性判断
         if (current.trim().length === 0 || isNaN(current) || parseInt(current) <= 0) {
             let old = $(this).attr('data-old');
@@ -180,17 +182,51 @@ $(() => {
         }
         // 当验证通过后则可以更新数据，并将其存入本地存储
         let id = $(this).parents('.item').attr('data-id');
-        arr.forEach(e => {
+        console.log(id);
+        arr=kits.loadData('cartListData');
+        let obj = arr.find((e) => {
             return e.pID == id;
         });
+        
         // 找到id相对应的对象 并将其number值进行重新赋值
-        obj.number = parseInt(current);
+        obj.number = current;
         // 重新存储数据
         kits.saveData('cartListData', arr);
         // 更新数量总和 价格总和
         calcTotal();
         // find这个方法用于查找某个元素的后代元素中，满足条件的部分
         $(this).parents('.item').find('.computed').text(obj.number * obj.price);
+    })
+
+    // 实现回车键保存数据
+    // 实现发布效果
+    $('.number').on('keydown', function (e) {
+        if (e.keycode === 13) {
+            $('.number').on('blur', function () {
+                // 获取此时的数量值
+                let current = $(this).val();
+                // 每次让用户自己输入的内容，一定要做合法性判断
+                if (current.trim().length === 0 || isNaN(current) || parseInt(current) <= 0) {
+                    let old = $(this).attr('data-old');
+                    $(this).val(old); // 如果用户输入的不正确，恢复以前的正确的数字
+                    alert('商品数量不正确，请输入一个阿拉伯数字');
+                    return;
+                }
+                // 当验证通过后则可以更新数据，并将其存入本地存储
+                let id = $(this).parents('.item').attr('data-id');
+                let obj = arr.forEach(e => {
+                    return e.pID == id;
+                });
+                // 找到id相对应的对象 并将其number值进行重新赋值
+                obj.number = current;
+                // 重新存储数据
+                kits.saveData('cartListData', arr);
+                // 更新数量总和 价格总和
+                calcTotal();
+                // find这个方法用于查找某个元素的后代元素中，满足条件的部分
+                $(this).parents('.item').find('.computed').text(obj.number * obj.price);
+            })
+        }
     })
 
     // 实现移除商品列表
